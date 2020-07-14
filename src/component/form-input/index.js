@@ -3,6 +3,7 @@ import {View, TextInput, Text} from 'react-native';
 import styles from './style';
 
 const FormInput = ({title, valueName, isNumeric, handleInput, value}) => {
+  console.log('form-----', title, value);
   return (
     <View style={styles.containerInputForm}>
       <View style={styles.containerFormTitle}>
@@ -12,7 +13,7 @@ const FormInput = ({title, valueName, isNumeric, handleInput, value}) => {
         style={styles.textInputStyle}
         onChangeText={(text) => handleInput(valueName, text)}
         keyboardType={isNumeric ? 'number-pad' : 'default'}
-        value={value}
+        value={`${value}`}
         returnKeyType={'done'}
         maxLength={isNumeric ? 3 : null}
       />

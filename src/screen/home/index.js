@@ -30,6 +30,7 @@ class Home extends React.PureComponent {
       photo: '',
       modalDetailVisible: false,
       detail: {},
+      isEdit: false,
     };
   }
 
@@ -57,7 +58,7 @@ class Home extends React.PureComponent {
 
   handleAdd = async () => {
     try {
-      const {firstName, lastName, age, photo} = this.state;
+      const {firstName, lastName, age, photo, detail, isEdit} = this.state;
       if (!firstName || !lastName || !age) {
         return Alert.alert(
           'Error',
@@ -88,12 +89,22 @@ class Home extends React.PureComponent {
         photo: photo ? photo : 'N/A',
       };
       console.log('input----', input);
-      const response = await axios.post(
-        'https://simple-contact-crud.herokuapp.com/contact',
-        input,
-      );
-      console.log('res----', response);
-      this.setState({modalVisible: false});
+      if (isEdit) {
+        const response = await axios.put(
+          `https://simple-contact-crud.herokuapp.com/contact/${detail.id}`,
+          input,
+        );
+        console.log('res-edit---', response);
+        this.setState({modalVisible: false});
+        this.getContactList();
+      } else {
+        const response = await axios.post(
+          'https://simple-contact-crud.herokuapp.com/contact',
+          input,
+        );
+        console.log('res----', response);
+        this.setState({modalVisible: false});
+      }
     } catch (err) {
       console.log(err);
     }
@@ -157,6 +168,25 @@ class Home extends React.PureComponent {
     }));
   };
 
+  handleGoToEdit = () => {
+    let data = this.state.detail;
+    console.log('gotoedit----', data);
+    this.setState({
+      modalDetailVisible: false,
+    });
+    setTimeout(() => {
+      this.setState({
+        // modalDetailVisible: false,
+        modalVisible: true,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        age: data.age,
+        photo: data.photo,
+        isEdit: true,
+      });
+    }, 500);
+  };
+
   renderAddButton() {
     return (
       <TouchableOpacity
@@ -168,7 +198,8 @@ class Home extends React.PureComponent {
   }
 
   renderModalInput() {
-    const {modalVisible, firstName, lastName, age, photo} = this.state;
+    const {modalVisible, firstName, lastName, age, photo, isEdit} = this.state;
+    console.log('modalinput----', this.state);
     return (
       <View>
         <Modal
@@ -199,7 +230,9 @@ class Home extends React.PureComponent {
                   style={styles.iconStyle}
                   color={'#000'}
                 />
-                <Text style={styles.modalTitle}>New Contact</Text>
+                <Text style={styles.modalTitle}>
+                  {isEdit ? 'Edit Contact' : 'New Contact'}
+                </Text>
               </View>
               <TouchableOpacity style={styles.containerAvatar}>
                 <Image
@@ -209,7 +242,9 @@ class Home extends React.PureComponent {
                   }}
                   style={styles.avatar}
                 />
-                <Text style={styles.avatarText}>Add Photo</Text>
+                <Text style={styles.avatarText}>
+                  {isEdit ? 'Edit' : 'Add Photo'}
+                </Text>
               </TouchableOpacity>
               <View>
                 <FormInput
@@ -247,7 +282,9 @@ class Home extends React.PureComponent {
         <Modal
           isVisible={modalDetailVisible}
           style={{marginHorizontal: 0}}
-          onBackdropPress={() => this.setState({modalDetailVisible: false})}>
+          onBackdropPress={() => this.setState({modalDetailVisible: false})}
+          onSwipeComplete={() => this.setState({modalDetailVisible: false})}
+          swipeDirection="down">
           <View style={styles.containerModal}>
             <View style={styles.containerHeader}>
               <TouchableOpacity onPress={this.handleCloseModal}>
@@ -257,7 +294,7 @@ class Home extends React.PureComponent {
                   color={'#000'}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleEdit}>
+              <TouchableOpacity onPress={this.handleGoToEdit}>
                 <Text style={[styles.textMedium]}>Edit</Text>
               </TouchableOpacity>
             </View>
@@ -318,8 +355,10 @@ class Home extends React.PureComponent {
           </View>
         )}
         {this.renderAddButton()}
-        {this.renderModalInput()}
-        {this.renderModalDetail()}
+        <>
+          {this.renderModalInput()}
+          {this.renderModalDetail()}
+        </>
       </View>
     );
   }
