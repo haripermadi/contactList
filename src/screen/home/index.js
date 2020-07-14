@@ -64,6 +64,21 @@ class Home extends React.PureComponent {
           {cancelable: false},
         );
       }
+      if (firstName.length < 3 || lastName.length < 3) {
+        return Alert.alert(
+          'Error',
+          'first name and last name minimum 3 characters',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {cancelable: false},
+        );
+      } else if (age > 200 || age < 1) {
+        return Alert.alert(
+          'Error',
+          'Age must be larger than 1 and less than 200',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {cancelable: false},
+        );
+      }
       let input = {
         firstName,
         lastName,
@@ -80,6 +95,16 @@ class Home extends React.PureComponent {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  handleCloseModal = () => {
+    this.setState({
+      modalVisible: false,
+      firstName: '',
+      lastName: '',
+      age: null,
+      photo: '',
+    });
   };
 
   renderAddButton() {
@@ -102,12 +127,7 @@ class Home extends React.PureComponent {
           onBackdropPress={() => this.setState({modalVisible: false})}>
           <View style={styles.containerModal}>
             <View style={styles.containerHeader}>
-              <TouchableOpacity
-                onPress={() =>
-                  this.setState({
-                    modalVisible: !modalVisible,
-                  })
-                }>
+              <TouchableOpacity onPress={this.handleCloseModal}>
                 <Icon
                   name={'close'}
                   style={[styles.iconStyle, styles.textRed]}
