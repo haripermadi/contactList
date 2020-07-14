@@ -28,6 +28,8 @@ class Home extends React.PureComponent {
       lastName: '',
       age: null,
       photo: '',
+      modalDetailVisible: false,
+      detail: {},
     };
   }
 
@@ -100,11 +102,59 @@ class Home extends React.PureComponent {
   handleCloseModal = () => {
     this.setState({
       modalVisible: false,
+      modalDetailVisible: false,
       firstName: '',
       lastName: '',
       age: null,
       photo: '',
     });
+  };
+
+  goToDetail = async (id) => {
+    try {
+      const response = await axios.get(
+        `https://simple-contact-crud.herokuapp.com/contact/${id}`,
+      );
+      console.log('detail----', response);
+      this.setState({
+        modalDetailVisible: true,
+        detail: response.data.data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  handleDelete = async () => {
+    try {
+      let id = this.state.detail.id;
+      console.log('delete id----', id);
+      const response = await axios.delete(
+        `https://simple-contact-crud.herokuapp.com/contact/${id}`,
+      );
+      console.log('delete----', response);
+      this.setState({
+        modalDetailVisible: false,
+        detail: {},
+      });
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        error.message,
+        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+        {cancelable: false},
+      );
+    }
+  };
+
+  loadErrorImage = () => {
+    console.log('load error---------');
+    this.setState((prevState) => ({
+      detail: {
+        ...prevState.detail,
+        photo: 'https://api.adorable.io/avatars/285/avatar.png',
+      },
+    }));
   };
 
   renderAddButton() {
@@ -190,6 +240,57 @@ class Home extends React.PureComponent {
       </View>
     );
   }
+  renderModalDetail() {
+    const {modalDetailVisible, detail} = this.state;
+    return (
+      <View>
+        <Modal
+          isVisible={modalDetailVisible}
+          style={{marginHorizontal: 0}}
+          onBackdropPress={() => this.setState({modalDetailVisible: false})}>
+          <View style={styles.containerModal}>
+            <View style={styles.containerHeader}>
+              <TouchableOpacity onPress={this.handleCloseModal}>
+                <Icon
+                  name={'close'}
+                  style={[styles.iconStyle, styles.textRed]}
+                  color={'#000'}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.handleEdit}>
+                <Text style={[styles.textMedium]}>Edit</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.containerModalInside}>
+              <View style={styles.containerAvatar}>
+                <Image
+                  source={{
+                    uri: detail.photo,
+                  }}
+                  style={styles.avatar}
+                  onError={this.loadErrorImage}
+                />
+              </View>
+              <View style={styles.containerDesc}>
+                <Text
+                  style={
+                    styles.title
+                  }>{`${detail.firstName} ${detail.lastName}`}</Text>
+                <Text style={styles.textSmall}>{detail.age} years old</Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.containerDelete}
+                onPress={this.handleDelete}>
+                <Text style={styles.textButton}>Delete Contact</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    );
+  }
+
   render() {
     console.log('state=====', this.state);
     const {contactList} = this.state;
@@ -202,7 +303,13 @@ class Home extends React.PureComponent {
           <View style={{height: height * 0.83}}>
             <FlatList
               data={contactList}
-              renderItem={({item}) => <ListItem key={item.id} {...item} />}
+              renderItem={({item}) => (
+                <ListItem
+                  key={item.id}
+                  {...item}
+                  handleDetail={this.goToDetail}
+                />
+              )}
               keyExtractor={(item) => item.id}
               contentContainerStyle={styles.containerList}
               showsVerticalScrollIndicator={false}
@@ -212,6 +319,7 @@ class Home extends React.PureComponent {
         )}
         {this.renderAddButton()}
         {this.renderModalInput()}
+        {this.renderModalDetail()}
       </View>
     );
   }

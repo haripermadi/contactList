@@ -4,7 +4,7 @@ import {View, TouchableOpacity, Text, Image} from 'react-native';
 import styles from './style';
 
 const ListItem = (props) => {
-  const {firstName, lastName, age, photo} = props;
+  const {firstName, lastName, photo, id} = props;
   const [image, setImage] = useState('');
   useEffect(() => {
     setImage(photo);
@@ -13,7 +13,9 @@ const ListItem = (props) => {
     setImage('https://api.adorable.io/avatars/285/avatar.png');
   };
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => props.handleDetail(id)}>
       <View style={styles.containerImage}>
         <Image
           source={{

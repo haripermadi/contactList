@@ -1,11 +1,12 @@
 import {StyleSheet, Dimensions} from 'react-native';
 
-const {height} = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 
 export default StyleSheet.create({
   container: {
     // backgroundColor: 'yellow',
     paddingHorizontal: 5,
+    height: height * 0.9,
   },
   containerList: {
     justifyContent: 'space-between',
@@ -85,5 +86,42 @@ export default StyleSheet.create({
     fontSize: 16,
     color: '#6B5AED',
     fontWeight: 'bold',
+  },
+  containerDesc: {
+    // backgroundColor: 'yellow',
+    paddingVertical: 10,
+    marginVertical: 10,
+    alignItems: 'center',
+    height: 200,
+  },
+  textSmall: {
+    fontSize: 16,
+    color: 'grey',
+    marginVertical: 5,
+  },
+  containerDelete: {
+    backgroundColor: '#E85F60',
+    paddingVertical: 10,
+    borderRadius: 5,
+    position: 'absolute',
+    width: width * 0.8,
+    bottom: 20,
+  },
+  textButton: {
+    fontSize: 14,
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  containerModalInside: {
+    // backgroundColor: 'yellow',
+    height: height * 0.7,
+    alignItems: 'center',
+  },
+  textMedium: {
+    fontSize: 18,
+    color: 'grey',
+    marginVertical: 5,
+    marginRight: 5,
   },
 });
