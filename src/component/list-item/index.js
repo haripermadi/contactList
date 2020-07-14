@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, TouchableOpacity, Text, Image} from 'react-native';
 
-import styles from './styles';
+import styles from './style';
 
 const ListItem = (props) => {
   const {firstName, lastName, age, photo} = props;
