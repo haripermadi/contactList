@@ -5,9 +5,9 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
-  Image,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import Modal from 'react-native-modal';
@@ -227,81 +227,82 @@ class Home extends React.PureComponent {
     const {modalVisible, firstName, lastName, age, photo, isEdit} = this.state;
     console.log('modalinput----', this.state);
     return (
-      <View>
-        <Modal
-          isVisible={modalVisible}
-          style={{marginHorizontal: 0}}
-          onBackdropPress={() =>
-            this.setState({modalVisible: false, isEdit: false})
-          }>
-          <View style={styles.containerModal}>
-            <View style={styles.containerHeader}>
-              <TouchableOpacity onPress={this.handleCloseModal}>
-                <Icon
-                  name={'close'}
-                  style={[styles.iconStyle, styles.textRed]}
-                  color={'#000'}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={_.debounce(
-                  () => {
-                    this.handleAdd();
-                  },
-                  500,
-                  true,
-                )}>
-                <Icon
-                  name={'check'}
-                  style={[styles.iconStyle, styles.textPurple]}
-                  color={'#000'}
-                />
-              </TouchableOpacity>
-            </View>
-            <View>
-              <View style={styles.containerModalTitle}>
-                <Icon
-                  name={'note-text-outline'}
-                  style={styles.iconStyle}
-                  color={'#000'}
-                />
-                <Text style={styles.modalTitle}>
-                  {isEdit ? 'Edit Contact' : 'New Contact'}
-                </Text>
-              </View>
-              <Avatar
-                isEdit={isEdit}
-                photo={photo}
-                handleImagePicker={this.handleImagePicker}
-                type={'add'}
+      // <View>
+      <Modal
+        isVisible={modalVisible}
+        style={{marginHorizontal: 0, marginBottom: 10}}
+        onBackdropPress={() =>
+          this.setState({modalVisible: false, isEdit: false})
+        }
+        avoidKeyboard={true}>
+        <ScrollView style={styles.containerModal}>
+          <View style={styles.containerHeader}>
+            <TouchableOpacity onPress={this.handleCloseModal}>
+              <Icon
+                name={'close'}
+                style={[styles.iconStyle, styles.textRed]}
+                color={'#000'}
               />
-              <View>
-                <FormInput
-                  title={'First Name'}
-                  valueName={'firstName'}
-                  isNumeric={false}
-                  handleInput={this.handleInputModal}
-                  value={firstName}
-                />
-                <FormInput
-                  title={'Last Name'}
-                  valueName={'lastName'}
-                  isNumeric={false}
-                  handleInput={this.handleInputModal}
-                  value={lastName}
-                />
-                <FormInput
-                  title={'Age'}
-                  valueName={'age'}
-                  isNumeric={true}
-                  handleInput={this.handleInputModal}
-                  value={age}
-                />
-              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={_.debounce(
+                () => {
+                  this.handleAdd();
+                },
+                500,
+                true,
+              )}>
+              <Icon
+                name={'check'}
+                style={[styles.iconStyle, styles.textPurple]}
+                color={'#000'}
+              />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <View style={styles.containerModalTitle}>
+              <Icon
+                name={'note-text-outline'}
+                style={styles.iconStyle}
+                color={'#000'}
+              />
+              <Text style={styles.modalTitle}>
+                {isEdit ? 'Edit Contact' : 'New Contact'}
+              </Text>
+            </View>
+            <Avatar
+              isEdit={isEdit}
+              photo={photo}
+              handleImagePicker={this.handleImagePicker}
+              type={'add'}
+            />
+            <View>
+              <FormInput
+                title={'First Name'}
+                valueName={'firstName'}
+                isNumeric={false}
+                handleInput={this.handleInputModal}
+                value={firstName}
+              />
+              <FormInput
+                title={'Last Name'}
+                valueName={'lastName'}
+                isNumeric={false}
+                handleInput={this.handleInputModal}
+                value={lastName}
+              />
+              <FormInput
+                title={'Age'}
+                valueName={'age'}
+                isNumeric={true}
+                handleInput={this.handleInputModal}
+                value={age}
+              />
             </View>
           </View>
-        </Modal>
-      </View>
+        </ScrollView>
+      </Modal>
+      // </View>
     );
   }
 

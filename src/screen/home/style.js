@@ -59,6 +59,7 @@ export default StyleSheet.create({
     borderTopEndRadius: Scaling.moderateScale(10),
     paddingTop: Scaling.moderateScale(10),
     paddingHorizontal: 5,
+    marginBottom: 5,
   },
   modalTitle: {
     fontSize: Scaling.moderateScale(16),
