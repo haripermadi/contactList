@@ -54,7 +54,7 @@ export default StyleSheet.create({
   containerModal: {
     flex: 1,
     backgroundColor: 'white',
-    top: height * 0.05,
+    top: height * 0.02,
     borderTopStartRadius: Scaling.moderateScale(10),
     borderTopEndRadius: Scaling.moderateScale(10),
     paddingTop: Scaling.moderateScale(10),
@@ -68,7 +68,7 @@ export default StyleSheet.create({
   },
   containerModalTitle: {
     flexDirection: 'row',
-    marginVertical: Scaling.moderateScale(10),
+    marginVertical: Scaling.moderateScale(5),
     alignItems: 'center',
   },
   containerDesc: {

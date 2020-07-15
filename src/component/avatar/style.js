@@ -13,7 +13,7 @@ export default StyleSheet.create({
   containerAvatar: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Scaling.moderateScale(30),
+    marginTop: Scaling.moderateScale(10),
   },
   avatarText: {
     fontSize: Scaling.moderateScale(16),
