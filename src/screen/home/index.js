@@ -38,7 +38,8 @@ class Home extends React.PureComponent {
       firstName: '',
       lastName: '',
       age: 1,
-      photo: '',
+      photo:
+        'https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png',
       modalDetailVisible: false,
       detail: {},
       isEdit: false,
@@ -171,6 +172,40 @@ class Home extends React.PureComponent {
     }, 500);
   };
 
+  handleImagePicker = () => {
+    const options = {
+      title: 'Select Avatar',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+      maxWidth: 600,
+      maxHeight: 600,
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('imagepicker---Response === ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = 'data:image/jpeg;base64,' + response.data;
+
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+        console.log('source----', source);
+
+        this.setState({
+          photo: source,
+        });
+      }
+    });
+  };
+
   renderAddButton() {
     return (
       <TouchableOpacity
@@ -218,11 +253,12 @@ class Home extends React.PureComponent {
                   {isEdit ? 'Edit Contact' : 'New Contact'}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.containerAvatar}>
+              <TouchableOpacity
+                style={styles.containerAvatar}
+                onPress={this.handleImagePicker}>
                 <Image
                   source={{
-                    uri:
-                      'https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png',
+                    uri: photo,
                   }}
                   style={styles.avatar}
                 />
