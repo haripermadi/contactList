@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Scaling from '../../helper/Scaling';
 
 export default StyleSheet.create({
   container: {
@@ -10,26 +11,26 @@ export default StyleSheet.create({
     shadowOffset: {width: 2, height: 3},
     shadowOpacity: 0.6,
     shadowRadius: 3,
-    elevation: 10,
-    borderRadius: 10,
+    elevation: Scaling.moderateScale(10),
+    borderRadius: Scaling.moderateScale(10),
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: Scaling.moderateScale(10),
   },
   textContent: {
-    fontSize: 16,
+    fontSize: Scaling.moderateScale(16),
     color: '#2f3542',
     fontWeight: 'bold',
   },
   image: {
-    width: 50,
-    height: 50,
+    width: Scaling.moderateScale(50),
+    height: Scaling.moderateScale(50),
     resizeMode: 'cover',
-    borderRadius: 50,
+    borderRadius: Scaling.moderateScale(50),
   },
   containerImage: {
     backgroundColor: '#ffffff',
     padding: 5,
-    borderRadius: 60,
+    borderRadius: Scaling.moderateScale(60),
     marginHorizontal: 5,
   },
   containerDesc: {

@@ -25,6 +25,7 @@ import {
   deleteContactAsync,
   editContactAsync,
 } from '../../redux/contact/contact.actions';
+import {checkAlphanumeric} from '../../helper/index';
 
 const {height} = Dimensions.get('window');
 
@@ -55,10 +56,6 @@ class Home extends React.PureComponent {
     });
   };
 
-  checkAlphanumeric = (input) => {
-    return /^[a-zA-Z0-9]*$/.test(input);
-  };
-
   handleAdd = async () => {
     try {
       const {firstName, lastName, age, photo, detail, isEdit} = this.state;
@@ -86,8 +83,8 @@ class Home extends React.PureComponent {
           {cancelable: false},
         );
       } else if (
-        !this.checkAlphanumeric(firstName) ||
-        !this.checkAlphanumeric(lastName)
+        !checkAlphanumeric(firstName) ||
+        !checkAlphanumeric(lastName)
       ) {
         return Alert.alert(
           'Error',

@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import Scaling from '../../helper/Scaling';
 
 export default StyleSheet.create({
   containerInputForm: {
@@ -6,7 +7,7 @@ export default StyleSheet.create({
     // backgroundColor: 'yellow',
     justifyContent: 'space-between',
     // alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: Scaling.moderateScale(10),
     marginHorizontal: 3,
     borderBottomWidth: 0.5,
     borderColor: 'grey',
@@ -16,11 +17,11 @@ export default StyleSheet.create({
     // flex: 1,
   },
   textTitleInput: {
-    fontSize: 14,
+    fontSize: Scaling.moderateScale(14),
     color: '#222f3e',
   },
   textInputStyle: {
-    height: 35,
+    height: Scaling.moderateScale(35),
     paddingHorizontal: 5,
   },
 });
