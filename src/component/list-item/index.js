@@ -10,7 +10,9 @@ const ListItem = (props) => {
     setImage(photo);
   }, []);
   const loadError = () => {
-    setImage('https://api.adorable.io/avatars/285/avatar.png');
+    setImage(
+      'https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png',
+    );
   };
   return (
     <TouchableOpacity

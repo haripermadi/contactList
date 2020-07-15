@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import Modal from 'react-native-modal';
@@ -17,6 +18,7 @@ import ImagePicker from 'react-native-image-picker';
 import styles from './style';
 import ListItem from '../../component/list-item';
 import FormInput from '../../component/form-input';
+import Avatar from '../../component/avatar';
 
 import {
   fetchContactListAsync,
@@ -123,6 +125,7 @@ class Home extends React.PureComponent {
       lastName: '',
       age: null,
       photo: '',
+      isEdit: false,
     });
   };
 
@@ -184,7 +187,7 @@ class Home extends React.PureComponent {
     };
 
     ImagePicker.showImagePicker(options, (response) => {
-      console.log('imagepicker---Response === ', response);
+      // console.log('imagepicker---Response === ', response);
 
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -224,7 +227,9 @@ class Home extends React.PureComponent {
         <Modal
           isVisible={modalVisible}
           style={{marginHorizontal: 0}}
-          onBackdropPress={() => this.setState({modalVisible: false})}>
+          onBackdropPress={() =>
+            this.setState({modalVisible: false, isEdit: false})
+          }>
           <View style={styles.containerModal}>
             <View style={styles.containerHeader}>
               <TouchableOpacity onPress={this.handleCloseModal}>
@@ -253,19 +258,12 @@ class Home extends React.PureComponent {
                   {isEdit ? 'Edit Contact' : 'New Contact'}
                 </Text>
               </View>
-              <TouchableOpacity
-                style={styles.containerAvatar}
-                onPress={this.handleImagePicker}>
-                <Image
-                  source={{
-                    uri: photo,
-                  }}
-                  style={styles.avatar}
-                />
-                <Text style={styles.avatarText}>
-                  {isEdit ? 'Edit' : 'Add Photo'}
-                </Text>
-              </TouchableOpacity>
+              <Avatar
+                isEdit={isEdit}
+                photo={photo}
+                handleImagePicker={this.handleImagePicker}
+                type={'add'}
+              />
               <View>
                 <FormInput
                   title={'First Name'}
@@ -295,6 +293,7 @@ class Home extends React.PureComponent {
       </View>
     );
   }
+
   renderModalDetail() {
     const {modalDetailVisible} = this.state;
     const {contactDetail} = this.props;
@@ -320,15 +319,7 @@ class Home extends React.PureComponent {
               </TouchableOpacity>
             </View>
             <View style={styles.containerModalInside}>
-              <View style={styles.containerAvatar}>
-                <Image
-                  source={{
-                    uri: contactDetail.photo,
-                  }}
-                  style={styles.avatar}
-                  // onError={this.loadErrorImage}
-                />
-              </View>
+              <Avatar {...contactDetail} />
               <View style={styles.containerDesc}>
                 <Text
                   style={
@@ -353,7 +344,7 @@ class Home extends React.PureComponent {
 
   render() {
     console.log('state=====', this.state, '--props---', this.props);
-    const {contacts} = this.props;
+    const {contacts, isLoading} = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.containerTitle}>
@@ -377,6 +368,7 @@ class Home extends React.PureComponent {
             />
           </View>
         )}
+        {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
         {this.renderAddButton()}
         {this.renderModalInput()}
         {this.renderModalDetail()}

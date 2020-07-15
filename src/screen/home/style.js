@@ -71,22 +71,6 @@ export default StyleSheet.create({
     marginVertical: Scaling.moderateScale(10),
     alignItems: 'center',
   },
-  avatar: {
-    height: Scaling.moderateScale(150),
-    width: Scaling.moderateScale(150),
-    borderRadius: Scaling.moderateScale(150),
-    resizeMode: 'cover',
-  },
-  containerAvatar: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: Scaling.moderateScale(30),
-  },
-  avatarText: {
-    fontSize: Scaling.moderateScale(16),
-    color: '#6B5AED',
-    fontWeight: 'bold',
-  },
   containerDesc: {
     // backgroundColor: 'yellow',
     paddingVertical: Scaling.moderateScale(10),
