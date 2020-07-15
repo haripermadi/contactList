@@ -14,6 +14,7 @@ import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
+import _ from 'lodash';
 
 import styles from './style';
 import ListItem from '../../component/list-item';
@@ -30,18 +31,18 @@ import {
 import {checkAlphanumeric} from '../../helper/index';
 
 const {height} = Dimensions.get('window');
+const defaultAvatar =
+  'https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png';
 
 class Home extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      // contactList: [],
       modalVisible: false,
       firstName: '',
       lastName: '',
       age: 1,
-      photo:
-        'https://www.pngitem.com/pimgs/m/421-4212341_default-avatar-svg-hd-png-download.png',
+      photo: defaultAvatar,
       modalDetailVisible: false,
       detail: {},
       isEdit: false,
@@ -49,7 +50,6 @@ class Home extends React.PureComponent {
   }
 
   componentDidMount() {
-    // this.getContactList();
     this.props.getContactList();
   }
 
@@ -100,17 +100,31 @@ class Home extends React.PureComponent {
         firstName,
         lastName,
         age: parseInt(age),
-        photo: photo ? photo : 'N/A',
+        photo: photo ? photo : defaultAvatar,
       };
       console.log('input----', input);
       if (isEdit) {
         await this.props.editContact(contactDetail.id, input);
-        this.setState({modalVisible: false});
+        this.setState({
+          modalVisible: false,
+          firstName: '',
+          lastName: '',
+          age: 1,
+          photo: defaultAvatar,
+          isEdit: false,
+        });
         this.props.getContactList();
       } else {
         await this.props.postNewContact(input);
         this.props.getContactList();
-        this.setState({modalVisible: false});
+        this.setState({
+          modalVisible: false,
+          firstName: '',
+          lastName: '',
+          age: 1,
+          photo: defaultAvatar,
+          isEdit: false,
+        });
       }
     } catch (err) {
       console.log(err);
@@ -123,8 +137,8 @@ class Home extends React.PureComponent {
       modalDetailVisible: false,
       firstName: '',
       lastName: '',
-      age: null,
-      photo: '',
+      age: 1,
+      photo: defaultAvatar,
       isEdit: false,
     });
   };
@@ -144,16 +158,6 @@ class Home extends React.PureComponent {
       modalDetailVisible: false,
     });
     this.props.getContactList();
-  };
-
-  loadErrorImage = () => {
-    console.log('load error---------');
-    this.setState((prevState) => ({
-      detail: {
-        ...prevState.detail,
-        photo: 'https://api.adorable.io/avatars/285/avatar.png',
-      },
-    }));
   };
 
   handleGoToEdit = () => {
@@ -239,7 +243,14 @@ class Home extends React.PureComponent {
                   color={'#000'}
                 />
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.handleAdd}>
+              <TouchableOpacity
+                onPress={_.debounce(
+                  () => {
+                    this.handleAdd();
+                  },
+                  500,
+                  true,
+                )}>
                 <Icon
                   name={'check'}
                   style={[styles.iconStyle, styles.textPurple]}
@@ -332,7 +343,13 @@ class Home extends React.PureComponent {
 
               <TouchableOpacity
                 style={styles.containerDelete}
-                onPress={this.handleDelete}>
+                onPress={_.debounce(
+                  () => {
+                    this.handleDelete();
+                  },
+                  500,
+                  true,
+                )}>
                 <Text style={styles.textButton}>Delete Contact</Text>
               </TouchableOpacity>
             </View>
@@ -368,7 +385,11 @@ class Home extends React.PureComponent {
             />
           </View>
         )}
-        {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
+        {isLoading && (
+          <View style={styles.containerLoading}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
         {this.renderAddButton()}
         {this.renderModalInput()}
         {this.renderModalDetail()}

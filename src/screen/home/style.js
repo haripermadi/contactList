@@ -108,4 +108,7 @@ export default StyleSheet.create({
     marginVertical: 5,
     marginRight: 5,
   },
+  containerLoading: {
+    marginTop: height * 0.35,
+  },
 });

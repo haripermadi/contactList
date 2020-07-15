@@ -23,7 +23,7 @@ const Avatar = (props) => {
         onPress={handleImagePicker}>
         <Image
           source={{
-            uri: image,
+            uri: photo,
           }}
           style={styles.avatar}
           onError={loadError}
