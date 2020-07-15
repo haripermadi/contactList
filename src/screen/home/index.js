@@ -11,10 +11,20 @@ import {
 import axios from 'axios';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {connect} from 'react-redux';
+import ImagePicker from 'react-native-image-picker';
 
 import styles from './style';
 import ListItem from '../../component/list-item';
 import FormInput from '../../component/form-input';
+
+import {
+  fetchContactListAsync,
+  postNewContactAsync,
+  fetchByIdContactAsync,
+  deleteContactAsync,
+  editContactAsync,
+} from '../../redux/contact/contact.actions';
 
 const {height} = Dimensions.get('window');
 
@@ -22,11 +32,11 @@ class Home extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      contactList: [],
+      // contactList: [],
       modalVisible: false,
       firstName: '',
       lastName: '',
-      age: null,
+      age: 1,
       photo: '',
       modalDetailVisible: false,
       detail: {},
@@ -35,20 +45,9 @@ class Home extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.getContactList();
+    // this.getContactList();
+    this.props.getContactList();
   }
-
-  getContactList = async () => {
-    try {
-      const response = await axios.get(
-        'https://simple-contact-crud.herokuapp.com/contact',
-      );
-      console.log('res----', response);
-      this.setState({contactList: response.data.data});
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
 
   handleInputModal = (name, value) => {
     this.setState({
@@ -56,9 +55,14 @@ class Home extends React.PureComponent {
     });
   };
 
+  checkAlphanumeric = (input) => {
+    return /^[a-zA-Z0-9]*$/.test(input);
+  };
+
   handleAdd = async () => {
     try {
       const {firstName, lastName, age, photo, detail, isEdit} = this.state;
+      const {contactDetail} = this.props;
       if (!firstName || !lastName || !age) {
         return Alert.alert(
           'Error',
@@ -81,28 +85,31 @@ class Home extends React.PureComponent {
           [{text: 'OK', onPress: () => console.log('OK Pressed')}],
           {cancelable: false},
         );
+      } else if (
+        !this.checkAlphanumeric(firstName) ||
+        !this.checkAlphanumeric(lastName)
+      ) {
+        return Alert.alert(
+          'Error',
+          'First name and last name must only contain alpha-numeric characters',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {cancelable: false},
+        );
       }
       let input = {
         firstName,
         lastName,
-        age,
+        age: parseInt(age),
         photo: photo ? photo : 'N/A',
       };
       console.log('input----', input);
       if (isEdit) {
-        const response = await axios.put(
-          `https://simple-contact-crud.herokuapp.com/contact/${detail.id}`,
-          input,
-        );
-        console.log('res-edit---', response);
+        await this.props.editContact(contactDetail.id, input);
         this.setState({modalVisible: false});
-        this.getContactList();
+        this.props.getContactList();
       } else {
-        const response = await axios.post(
-          'https://simple-contact-crud.herokuapp.com/contact',
-          input,
-        );
-        console.log('res----', response);
+        await this.props.postNewContact(input);
+        this.props.getContactList();
         this.setState({modalVisible: false});
       }
     } catch (err) {
@@ -122,40 +129,20 @@ class Home extends React.PureComponent {
   };
 
   goToDetail = async (id) => {
-    try {
-      const response = await axios.get(
-        `https://simple-contact-crud.herokuapp.com/contact/${id}`,
-      );
-      console.log('detail----', response);
-      this.setState({
-        modalDetailVisible: true,
-        detail: response.data.data,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    await this.props.fetchContactById(id);
+    this.setState({
+      modalDetailVisible: true,
+    });
   };
 
   handleDelete = async () => {
-    try {
-      let id = this.state.detail.id;
-      console.log('delete id----', id);
-      const response = await axios.delete(
-        `https://simple-contact-crud.herokuapp.com/contact/${id}`,
-      );
-      console.log('delete----', response);
-      this.setState({
-        modalDetailVisible: false,
-        detail: {},
-      });
-    } catch (error) {
-      Alert.alert(
-        'Error',
-        error.message,
-        [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-        {cancelable: false},
-      );
-    }
+    let id = this.props.contactDetail.id;
+    console.log('delete id----', id);
+    await this.props.deleteContact(id);
+    this.setState({
+      modalDetailVisible: false,
+    });
+    this.props.getContactList();
   };
 
   loadErrorImage = () => {
@@ -169,7 +156,7 @@ class Home extends React.PureComponent {
   };
 
   handleGoToEdit = () => {
-    let data = this.state.detail;
+    let data = this.props.contactDetail;
     console.log('gotoedit----', data);
     this.setState({
       modalDetailVisible: false,
@@ -276,7 +263,8 @@ class Home extends React.PureComponent {
     );
   }
   renderModalDetail() {
-    const {modalDetailVisible, detail} = this.state;
+    const {modalDetailVisible} = this.state;
+    const {contactDetail} = this.props;
     return (
       <View>
         <Modal
@@ -302,18 +290,20 @@ class Home extends React.PureComponent {
               <View style={styles.containerAvatar}>
                 <Image
                   source={{
-                    uri: detail.photo,
+                    uri: contactDetail.photo,
                   }}
                   style={styles.avatar}
-                  onError={this.loadErrorImage}
+                  // onError={this.loadErrorImage}
                 />
               </View>
               <View style={styles.containerDesc}>
                 <Text
                   style={
                     styles.title
-                  }>{`${detail.firstName} ${detail.lastName}`}</Text>
-                <Text style={styles.textSmall}>{detail.age} years old</Text>
+                  }>{`${contactDetail.firstName} ${contactDetail.lastName}`}</Text>
+                <Text style={styles.textSmall}>
+                  {contactDetail.age} years old
+                </Text>
               </View>
 
               <TouchableOpacity
@@ -329,17 +319,17 @@ class Home extends React.PureComponent {
   }
 
   render() {
-    console.log('state=====', this.state);
-    const {contactList} = this.state;
+    console.log('state=====', this.state, '--props---', this.props);
+    const {contacts} = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.containerTitle}>
           <Text style={styles.title}>Contact List</Text>
         </View>
-        {contactList.length > 0 && (
+        {contacts.length > 0 && (
           <View style={{height: height * 0.83}}>
             <FlatList
-              data={contactList}
+              data={contacts}
               renderItem={({item}) => (
                 <ListItem
                   key={item.id}
@@ -355,13 +345,27 @@ class Home extends React.PureComponent {
           </View>
         )}
         {this.renderAddButton()}
-        <>
-          {this.renderModalInput()}
-          {this.renderModalDetail()}
-        </>
+        {this.renderModalInput()}
+        {this.renderModalDetail()}
       </View>
     );
   }
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    contacts: state.contact.contacts,
+    isLoading: state.contact.isLoading,
+    contactDetail: state.contact.contactDetail,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  getContactList: () => dispatch(fetchContactListAsync()),
+  postNewContact: (input) => dispatch(postNewContactAsync(input)),
+  fetchContactById: (id) => dispatch(fetchByIdContactAsync(id)),
+  deleteContact: (id) => dispatch(deleteContactAsync(id)),
+  editContact: (id, input) => dispatch(editContactAsync(id, input)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

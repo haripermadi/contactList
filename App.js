@@ -9,18 +9,23 @@
 import React from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Provider} from 'react-redux';
 
 import Home from './src/screen/home';
+
+import store from './src/redux/store';
 
 Icon.loadFont();
 
 const App: () => React$Node = () => {
   return (
     <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <Home />
-      </SafeAreaView>
+      <Provider store={store}>
+        <StatusBar barStyle="dark-content" />
+        <SafeAreaView>
+          <Home />
+        </SafeAreaView>
+      </Provider>
     </>
   );
 };
